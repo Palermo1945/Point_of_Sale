@@ -28,13 +28,12 @@ $sql = "INSERT INTO collection (date,name,invoice,amount,remarks,balance) VALUES
 $q = $db->prepare($sql);
 $q->execute(array(':k'=>$a,':l'=>$b,':m'=>$c,':n'=>$e,':o'=>$f,':p'=>$balance));
 
-$sqla = "UPDATE sales 
-        SET balance=?, amount=amount+?, due_date = ?, date = ?
-		WHERE invoice_number=?";
+$sqla = "UPDATE sales SET balance=?, amount=COALESCE(amount, 0)+? WHERE invoice_number=?";
 $qa = $db->prepare($sqla);
-$qa->execute(array($balance,$e,$f,$a,$b));
+$qa->execute(array($balance,$e,$b));
 
 
-header("location: customer_ledger.php.?cname=$b");
+header('location: customer_ledger.php?cname=' . urlencode($b));
+exit();
 
 ?>
