@@ -23,6 +23,7 @@ require_once('auth.php');
 
 	<!-- Custom CSS -->
 	<link href="dist/css/sb-admin-2.css" rel="stylesheet">
+	<link href="css/cashier-pos.css" rel="stylesheet">
 
 	<!-- Morris Charts CSS -->
 	<link href="vendor/morrisjs/morris.css" rel="stylesheet">
@@ -59,15 +60,20 @@ require_once('auth.php');
 		<?php include('navfixed.php');?>
 
 
-		<div id="page-wrapper">
-			<div class="row">
-				<div class="col-lg-12">
-					<h1 class="page-header">Welcome:<strong> <?php echo $session_cashier_name; ?></strong></h1>
-				</div>
-
-				<!-- /.col-lg-12 -->
+		<div id="page-wrapper" class="cashier-home">
+			<div class="cashier-home-header">
+				<p class="cashier-kicker">JGCML GROCERY / CASHIER</p>
+				<h1>Welcome, <?php echo htmlspecialchars($session_cashier_name, ENT_QUOTES, 'UTF-8'); ?></h1>
+				<p>Ready to start a sale?</p>
 			</div>
-
+			<section class="cashier-home-panel">
+				<h2>Choose payment type</h2>
+				<p>Start a new transaction by selecting how the customer will pay.</p>
+				<div class="cashier-payment-options">
+					<a href="sales.php?id=cash&amp;invoice=<?php echo urlencode($finalcode); ?>"><i class="fa fa-money" aria-hidden="true"></i> Cash sale</a>
+					<a href="sales.php?id=credit&amp;invoice=<?php echo urlencode($finalcode); ?>"><i class="fa fa-clock-o" aria-hidden="true"></i> Credit sale</a>
+				</div>
+			</section>
 		</div>
 
 		<!-- /.row -->

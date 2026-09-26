@@ -1,5 +1,7 @@
 <?php
 require_once('auth.php');
+header('Location: home.php');
+exit();
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -80,24 +82,37 @@ require_once('auth.php');
                             return $number;
                         }
                         include('connect.php');
-                        $tftft=$_GET['cname'];
-                        $resulta = $db->prepare("SELECT * FROM sales WHERE invoice_number= :a");
-                        $resulta->bindParam(':a', $tftft);
-                        $resulta->execute();
-                        for($i=0; $rowa = $resulta->fetch(); $i++){
-                            $name=$rowa['name'];
-                            $amount=$rowa['total_amount'];
-                            echo '<font style = "color:red"><h3>Due Date: '.$rowa['due_date'].'</h3></font><br> ';
+                        $invoiceNumber = isset($_GET['cname']) ? trim($_GET['cname']) : '';
+                        $sale = false;
+                        $customer = false;
+                        $amount = 0;
+                        if ($invoiceNumber !== '') {
+                            $saleQuery = $db->prepare("SELECT * FROM sales WHERE invoice_number = :invoice LIMIT 1");
+                            $saleQuery->execute(array(':invoice' => $invoiceNumber));
+                            $sale = $saleQuery->fetch(PDO::FETCH_ASSOC);
                         }
-                        $resultas = $db->prepare("SELECT * FROM customer WHERE customer_name= :b");
-                        $resultas->bindParam(':b', $name);
-                        $resultas->execute();
-                        for($i=0; $rowas = $resultas->fetch(); $i++){
-                            echo 'Name : '.$rowas['customer_name'].'<br>';
-                            echo 'Address : '.$rowas['address'].'<br>';
-                            echo 'Contact : '.$rowas['contact'].'<br>';
+                        if ($sale) {
+                            $amount = (float) $sale['total_amount'];
+                            $customerQuery = $db->prepare("SELECT customer_id, customer_name, address, contact FROM customer WHERE customer_name = :name LIMIT 1");
+                            $customerQuery->execute(array(':name' => $sale['name']));
+                            $customer = $customerQuery->fetch(PDO::FETCH_ASSOC);
                         }
                         ?>
+                        <?php if (!$sale) { ?>
+                            <div class="alert alert-warning" role="alert">
+                                The selected invoice was not found. Choose a customer and invoice from the ledger directory.
+                                <a class="btn btn-primary btn-sm" href="select_customer.php">Back to customers</a>
+                            </div>
+                        <?php } else { ?>
+                            <div class="customer-ledger-summary">
+                                <p><strong>Customer:</strong> <?php echo htmlspecialchars($sale['name'], ENT_QUOTES, 'UTF-8'); ?></p>
+                                <p><strong>Address:</strong> <?php echo htmlspecialchars($customer ? $customer['address'] : 'Not provided', ENT_QUOTES, 'UTF-8'); ?></p>
+                                <p><strong>Contact:</strong> <?php echo htmlspecialchars($customer ? $customer['contact'] : 'Not provided', ENT_QUOTES, 'UTF-8'); ?></p>
+                                <p><strong>Due date:</strong> <?php echo htmlspecialchars($sale['due_date'], ENT_QUOTES, 'UTF-8'); ?></p>
+                            </div>
+                            <?php if ($customer) { ?>
+                                <a class="btn btn-default" href="customer_invoices.php?customer_id=<?php echo urlencode($customer['customer_id']); ?>"><i class="fa fa-arrow-left" aria-hidden="true"></i> Back to invoices</a>
+                            <?php } ?>
                         
                         <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
                             <thead>
@@ -118,15 +133,12 @@ require_once('auth.php');
                                     <td>&nbsp;</td>
                                     <td>&nbsp;</td>
                                      <td align="right"><?php
-                                            $r=$amount;
-                                            echo '<font style = color:red;>Php'.''.formatMoney($r, true).'</font>';
+                                                        echo '<font style="color:red">Php ' . formatMoney($amount, true) . '</font>';
                                             ?></td>
                                 </tr>
                                 <?php
-                                $tftft=$_GET['cname'];
-                                $result = $db->prepare("SELECT * FROM collection WHERE name= :userid ORDER BY transaction_id ASC");
-                                $result->bindParam(':userid', $tftft);
-                                $result->execute();
+                                $result = $db->prepare("SELECT * FROM collection WHERE name = :invoice ORDER BY transaction_id ASC");
+                                $result->execute(array(':invoice' => $invoiceNumber));
                                 for($i=0; $row = $result->fetch(); $i++){
                                     ?>
                                     <tr class="record">
@@ -150,7 +162,8 @@ require_once('auth.php');
 
                             </tbody>
                         </table>
-                        <a rel="facebox" id="addd" class="btn btn-primary" href="addledger.php?invoice=<?php echo $_GET['cname']; ?>&amount=<?php echo $amount; ?>" style="margin-top: 10px;">Add Payment</a><br><br>
+                        <a rel="facebox" id="addd" class="btn btn-primary" href="addledger.php?invoice=<?php echo urlencode($invoiceNumber); ?>&amp;amount=<?php echo urlencode($amount); ?>" style="margin-top: 10px;">Add Payment</a><br><br>
+                        <?php } ?>
                         <div class="clearfix"></div>
                     </div>
 

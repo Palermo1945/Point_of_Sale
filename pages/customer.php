@@ -59,6 +59,12 @@ require_once('auth.php');
                     <h1 class="page-header">CUSTOMER LIST</h1>
                 </div>
 
+                <?php if (isset($_GET['error']) && $_GET['error'] === 'name_required') { ?>
+                    <div class="col-lg-12"><div class="alert alert-danger" role="alert">First and last name are required.</div></div>
+                <?php } elseif (isset($_GET['error']) && $_GET['error'] === 'name_duplicate') { ?>
+                    <div class="col-lg-12"><div class="alert alert-danger" role="alert">A customer with that name already exists, or the name is blank.</div></div>
+                <?php } ?>
+
                 <div id="maintable"><div style="margin-top: -19px; margin-bottom: 21px;">
                 </div>
                 <!--<a rel="facebox" id="addd" href="addcustomer.php" class="btn btn-primary">Add Customer</a><br><br>-->

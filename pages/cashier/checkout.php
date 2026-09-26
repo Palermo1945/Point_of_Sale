@@ -106,11 +106,25 @@ if($asas=='credit') {
 <?php
 }
 if($asas=='cash') {
-?><input type="text" name="cash" placeholder="Cash" style="width: 268px; margin-bottom: 15px;" /><br>
+?><input type="number" name="cash" placeholder="Cash received" min="<?php echo max(0, (float) $_GET['total']); ?>" step="0.01" required style="width: 268px; margin-bottom: 15px;" /><br>
 <?php
 }
 ?><input class="btn btn-primary btn-block" type="submit" value="save" style="width: 268px;" />
 </div>
 </form>
+<?php if ($asas === 'cash') { ?>
+<script>
+document.querySelector('form').addEventListener('submit', function (event) {
+	var cashField = this.elements.cash;
+	var amountDue = parseFloat(this.elements.amount.value) || 0;
+	var amountReceived = parseFloat(cashField.value);
+	if (!Number.isFinite(amountReceived) || amountReceived < amountDue) {
+		event.preventDefault();
+		alert('Insufficient cash. Please enter at least <?php echo number_format((float) $_GET['total'], 2, '.', ''); ?>.');
+		cashField.focus();
+	}
+});
+</script>
+<?php } ?>
 </body>
 </html>

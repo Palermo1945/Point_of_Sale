@@ -1,4 +1,8 @@
 <?php
+require_once('auth.php');
+header('Location: home.php');
+exit();
+
 session_start();
 include('connect.php');
 $a = date("m/d/Y");

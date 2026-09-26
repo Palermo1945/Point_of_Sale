@@ -83,7 +83,7 @@ require_once('auth.php');
               <th width="7%"> Qty </th>
               <th width="8%"> Cost </th>
               <th width="12%"> Status </th>
-              <th width="15%"> Action </th>
+              <th class="purchase-actions-heading"> Action </th>
             </tr>
           </thead>
           <tbody>
@@ -146,15 +146,17 @@ require_once('auth.php');
                 echo formatMoney($dsdsd, true);
                 ?></td>
                 <td><?php echo $row['status']; ?></td>
-                <td><a href="#" id="<?php echo $row['transaction_id']; ?>" class="btn btn-danger delbutton" title="Click To Delete">
-                <span><i class="fa fa-trash"></i></span>
-                </a> 
-                <a rel="facebox" class = "btn btn-success"  href="stockin.php?name=<?php echo $row['p_name']; ?>&iv=<?php echo $row['invoice_number']; ?>&qty=<?php echo $row['qty']; ?>&date=<?php echo $row['date_order']; ?>&tid=<?php echo $row['transaction_id']; ?>"">
-                <span><i class="fa fa-plus"></i></span>
-                </a>
-
-                <a class = "btn btn-primary"  href="printpo.php?id=<?php echo $row['invoice_number']; ?>&supplier=<?php echo $row['suplier']; ?>"><span><i class="fa fa-print"></i></span></a> 
-                </td>
+                <td class="purchase-actions-cell"><div class="purchase-actions">
+                  <a href="#" id="<?php echo $row['transaction_id']; ?>" class="btn btn-danger delbutton" title="Delete purchase order" aria-label="Delete purchase order">
+                    <i class="fa fa-trash" aria-hidden="true"></i>
+                  </a>
+                  <a rel="facebox" class="btn btn-success" href="stockin.php?name=<?php echo urlencode($row['p_name']); ?>&amp;iv=<?php echo urlencode($row['invoice_number']); ?>&amp;qty=<?php echo urlencode($row['qty']); ?>&amp;date=<?php echo urlencode($row['date_order']); ?>&amp;tid=<?php echo urlencode($row['transaction_id']); ?>" title="Receive stock" aria-label="Receive stock">
+                    <i class="fa fa-plus" aria-hidden="true"></i>
+                  </a>
+                  <a class="btn btn-primary" href="printpo.php?id=<?php echo urlencode($row['invoice_number']); ?>&amp;supplier=<?php echo urlencode($row['suplier']); ?>" title="Print purchase order" aria-label="Print purchase order">
+                    <i class="fa fa-print" aria-hidden="true"></i>
+                  </a>
+                </div></td>
               </tr>
               <?php
             }

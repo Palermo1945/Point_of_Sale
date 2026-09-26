@@ -23,6 +23,7 @@ require_once('auth.php');
 
   <!-- Custom CSS -->
   <link href="dist/css/sb-admin-2.css" rel="stylesheet">
+  <link href="css/cashier-pos.css" rel="stylesheet">
 
   <!-- Custom Fonts -->
   <link href="vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
@@ -34,43 +35,49 @@ require_once('auth.php');
         <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
         <![endif]-->
-        <link href="src/facebox.css" media="screen" rel="stylesheet" type="text/css" />
-        <script src="lib/jquery.js" type="text/javascript"></script>
-        <script src="src/facebox.js" type="text/javascript"></script>
-        <script type="text/javascript">
-          jQuery(document).ready(function($) {
-            $('a[rel*=facebox]').facebox({
-              loadingImage : 'src/loading.gif',
-              closeImage   : 'src/closelabel.png'
-            })
-          })
-        </script>
-
-
       </head>
 
       <body>
 
         <?php include('navfixed.php');?>
 
-        <div id="page-wrapper">
+        <div id="page-wrapper" class="cashier-page">
           <div class="row">
             <div class="col-lg-12">
-              <h1 class="page-header">Payment | <?php echo $_GET['id']; ?> </h1>
+              <header class="cashier-page-header">
+                <div>
+                  <p class="cashier-kicker">POINT OF SALE</p>
+                  <h1>New sale</h1>
+                </div>
+                <div class="cashier-invoice"><span>Invoice</span><strong><?php echo htmlspecialchars($_GET['invoice'], ENT_QUOTES, 'UTF-8'); ?></strong></div>
+              </header>
             </div>
 
-            <div id="maintable"><div style="margin-top: -19px; margin-bottom: 21px;">
-            </div>
-            <form action="incoming.php" method="post" class = "form-group" >
-              <input type="hidden" name="pt" class = "form-control" value="<?php echo $_GET['id']; ?>" />
-              <input type="hidden" name="invoice" class = "form-control" value="<?php echo $_GET['invoice']; ?>" />
-              <label>Select a Product</label><br />
-              <select  name="product"  style="width:500px;" class="chzn-select">
+            <?php if (isset($_GET['error']) && $_GET['error'] === 'insufficient_cash') { ?>
+              <div class="col-lg-12">
+                <div class="alert alert-danger" role="alert">Cash received must be equal to or greater than the invoice total. Update the amount below and submit again.</div>
+              </div>
+            <?php } elseif (isset($_GET['error']) && $_GET['error'] === 'customer_required') { ?>
+              <div class="col-lg-12">
+                <div class="alert alert-danger" role="alert">Enter a customer name before completing the sale.</div>
+              </div>
+            <?php } elseif (isset($_GET['error']) && $_GET['error'] === 'due_date_required') { ?>
+              <div class="col-lg-12">
+                <div class="alert alert-danger" role="alert">Select a due date before completing a credit sale.</div>
+              </div>
+            <?php } ?>
+
+            <div id="maintable" class="cashier-workspace">
+            <form action="incoming.php" method="post" class="cashier-entry-form">
+              <input type="hidden" name="pt" value="<?php echo htmlspecialchars($_GET['id'], ENT_QUOTES, 'UTF-8'); ?>" />
+              <input type="hidden" name="invoice" value="<?php echo htmlspecialchars($_GET['invoice'], ENT_QUOTES, 'UTF-8'); ?>" />
+              <div class="cashier-field cashier-product-field">
+                <label for="cashier-product">Select a product</label>
+              <select id="cashier-product" name="product" class="chzn-select">
                 <option></option>
                 <?php
                 include('connect.php');
                 $result = $db->prepare("SELECT * FROM products");
-                $result->bindParam(':userid', $res);
                 $result->execute();
                 for($i=0; $row = $result->fetch(); $i++){
                   ?>
@@ -92,17 +99,28 @@ require_once('auth.php');
                 }
                 ?>
               </select>
-              <br />
-              <label>Number of Item</label>
-              <input type="number" name="qty" value="1" min = "1" class = "form-control"  autocomplete="off" style="width: 100px; padding-top: 6px; padding-bottom: 6px; margin-right: 4px;" />
-              <label>Discount</label>
-              <input type="text" name="discount" value="0" class = "form-control"  autocomplete="off" style="width: 100px; padding-top: 6px; padding-bottom: 6px; margin-right: 4px;" />
-              <label>Value Add Tax:</label>
-              <input type="text" name="vat" value=".12" class = "form-control"  autocomplete="off" style="width: 100px; padding-top: 6px; padding-bottom: 6px; margin-right: 4px;" />
-              <br>
-              <input type="submit" class="btn btn-primary" value="add product" class = "form-control" style="width: 123px;" />
+              </div>
+              <div class="cashier-field">
+                <label for="cashier-quantity">Quantity</label>
+                <input id="cashier-quantity" type="number" name="qty" value="1" min="1" class="form-control" autocomplete="off" />
+              </div>
+              <div class="cashier-field">
+                <label for="cashier-discount">Discount</label>
+                <input id="cashier-discount" type="number" name="discount" value="0" min="0" step="0.01" class="form-control" autocomplete="off" />
+              </div>
+              <div class="cashier-field">
+                <label for="cashier-vat">VAT rate</label>
+                <input id="cashier-vat" type="number" name="vat" value="0.12" min="0" step="0.01" class="form-control" autocomplete="off" />
+              </div>
+              <button type="submit" class="btn btn-primary cashier-add-button"><i class="fa fa-plus" aria-hidden="true"></i> Add product</button>
             </form>
-            <table width="100%" class="table table-striped table-bordered table-hover" id="dataTables-example">
+            <section class="cashier-cart-panel" aria-label="Current sale items">
+              <div class="cashier-cart-heading">
+                <div><p class="cashier-kicker">CURRENT SALE</p><h2>Cart</h2></div>
+                <span class="cashier-cart-count">Invoice items</span>
+              </div>
+              <div class="cashier-table-scroll">
+            <table width="100%" class="table table-striped table-bordered table-hover cashier-cart-table" id="dataTables-example">
               <thead>
                 <tr>
                   <th> Product Code </th>
@@ -172,8 +190,8 @@ require_once('auth.php');
                 }
                 ?>
                 <tr>
-                  <td colspan="9"><strong style="font-size: 12px; color: #222222;">Total:</strong></td>
-                  <td colspan="3"><strong style="font-size: 12px; color: #222222;">
+                  <td colspan="9"><strong>Total due</strong></td>
+                  <td colspan="2"><strong class="cashier-total-value">
                     <?php
                     function formatMoney($number, $fractional=false) {
                       if ($fractional) {
@@ -197,14 +215,59 @@ require_once('auth.php');
                       $fgfg=$rowas['sum(total_amount)'];
                       echo formatMoney($fgfg, true);
                     }
+                    $baseAmountQuery = $db->prepare("SELECT COALESCE(SUM(amount), 0) FROM sales_order WHERE invoice = :invoice");
+                    $baseAmountQuery->execute(array(':invoice' => $sdsd));
+                    $baseAmount = (float) $baseAmountQuery->fetchColumn();
                     ?>
                   </strong></td>
                 </tr>
 
               </tbody>
             </table><br>
-            <a rel="facebox" class = "btn btn-primary" href="checkout.php?pt=<?php echo $_GET['id']?>&invoice=<?php echo $_GET['invoice']?>&total=<?php echo $fgfg ?>&cashier=<?php echo $session_cashier_name?>&p_amount=<?php echo $ccc?>">Check Out</a>
-
+              </div>
+              <div class="cashier-cart-footer">
+                <div><span>Total due</span><strong>&#8369;<?php echo isset($fgfg) ? number_format((float) $fgfg, 2) : '0.00'; ?></strong></div>
+                <?php if (isset($fgfg) && (float) $fgfg > 0) { ?>
+                  <?php
+                  $customerOptions = $db->query("SELECT customer_name FROM customer ORDER BY customer_name");
+                  $paymentType = isset($_GET['id']) && $_GET['id'] === 'credit' ? 'credit' : 'cash';
+                  ?>
+                  <form class="cashier-payment-form" action="savesales.php" method="post">
+                    <input type="hidden" name="invoice" value="<?php echo htmlspecialchars($_GET['invoice'], ENT_QUOTES, 'UTF-8'); ?>">
+                    <input type="hidden" name="cashier" value="<?php echo htmlspecialchars($session_cashier_name, ENT_QUOTES, 'UTF-8'); ?>">
+                    <input type="hidden" name="date" value="<?php echo date('m/d/Y'); ?>">
+                    <input type="hidden" name="ptype" value="<?php echo $paymentType; ?>">
+                    <input type="hidden" name="amount" value="<?php echo number_format((float) $fgfg, 2, '.', ''); ?>">
+                    <input type="hidden" name="p_amount" value="<?php echo number_format($baseAmount, 2, '.', ''); ?>">
+                    <div class="cashier-payment-fields">
+                      <div class="cashier-field">
+                        <label for="cashier-customer">Customer name</label>
+                        <input id="cashier-customer" class="form-control" type="text" name="cname" list="cashier-customer-options" placeholder="Enter or choose a customer" autocomplete="off" required>
+                        <datalist id="cashier-customer-options">
+                          <?php while ($customerOption = $customerOptions->fetch(PDO::FETCH_ASSOC)) { ?>
+                            <option value="<?php echo htmlspecialchars($customerOption['customer_name'], ENT_QUOTES, 'UTF-8'); ?>"></option>
+                          <?php } ?>
+                        </datalist>
+                      </div>
+                      <?php if ($paymentType === 'cash') { ?>
+                        <div class="cashier-field">
+                          <label for="cashier-cash">Cash received</label>
+                          <input id="cashier-cash" class="form-control" type="number" name="cash" min="<?php echo number_format((float) $fgfg, 2, '.', ''); ?>" step="0.01" placeholder="At least <?php echo number_format((float) $fgfg, 2); ?>" required>
+                        </div>
+                      <?php } else { ?>
+                        <div class="cashier-field">
+                          <label for="cashier-due-date">Payment due date</label>
+                          <input id="cashier-due-date" class="form-control" type="date" name="due" required>
+                        </div>
+                      <?php } ?>
+                      <button type="submit" class="btn btn-primary cashier-checkout-button"><i class="fa fa-check" aria-hidden="true"></i> Complete sale</button>
+                    </div>
+                  </form>
+                <?php } else { ?>
+                  <span class="cashier-checkout-button cashier-disabled-action"><i class="fa fa-arrow-right" aria-hidden="true"></i> Add an item to continue</span>
+                <?php } ?>
+              </div>
+            </section>
 
             <div class="clearfix"></div>
           </div>
