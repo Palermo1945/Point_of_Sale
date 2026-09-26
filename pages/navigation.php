@@ -15,7 +15,11 @@ if ($isCashierNavigation) {
     $finalcode = 'RS-' . createRandomPassword();
 }
 ?>
-<nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
+<?php
+$sharedStylePath = $isCashierNavigation ? '../../css/app-modern.css' : '../css/app-modern.css';
+?>
+<link rel="stylesheet" href="<?php echo $sharedStylePath; ?>">
+<nav class="navbar navbar-default navbar-static-top app-navigation <?php echo $isCashierNavigation ? 'cashier-navigation' : 'admin-navigation'; ?>" role="navigation" style="margin-bottom: 0">
     <div class="navbar-header">
         <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
             <span class="sr-only">Toggle navigation</span>
@@ -23,26 +27,33 @@ if ($isCashierNavigation) {
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="home.php">JGCML Grocery</a>
+        <a class="navbar-brand" href="home.php">
+            <span class="brand-mark"><i class="fa fa-shopping-basket" aria-hidden="true"></i></span>
+            <span class="brand-copy"><strong>JGCML</strong><small>Grocery POS</small></span>
+        </a>
     </div>
 
     <ul class="nav navbar-top-links navbar-right">
-        <li class="navbar-text">Welcome: <strong><?php echo htmlspecialchars($navigationName, ENT_QUOTES, 'UTF-8'); ?></strong></li>
+        <li class="nav-user"><span class="nav-user-avatar"><i class="fa fa-user" aria-hidden="true"></i></span><span class="nav-user-copy"><small><?php echo $isCashierNavigation ? 'CASHIER' : 'ADMIN'; ?></small><strong><?php echo htmlspecialchars($navigationName, ENT_QUOTES, 'UTF-8'); ?></strong></span></li>
         <?php if (!$isCashierNavigation) { ?>
         <li class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#" aria-label="User menu">
-                <i class="fa fa-user fa-fw"></i> <i class="fa fa-caret-down"></i>
+            <a class="dropdown-toggle nav-account-button" data-toggle="dropdown" href="#" aria-label="Account actions" title="Account actions">
+                <i class="fa fa-ellipsis-v" aria-hidden="true"></i>
             </a>
             <ul class="dropdown-menu dropdown-user">
-                <li><a href="#myModal" data-toggle="modal"><i class="fa fa-user fa-fw"></i> Add User</a></li>
+                <li><a href="#myModal" data-toggle="modal"><i class="fa fa-user-plus fa-fw" aria-hidden="true"></i> Add User</a></li>
             </ul>
         </li>
         <?php } ?>
-        <li><a href="logout.php"><i class="fa fa-sign-out fa-fw"></i> Logout</a></li>
+        <li><a class="nav-logout" href="logout.php"><i class="fa fa-sign-out fa-fw" aria-hidden="true"></i><span>Sign out</span></a></li>
     </ul>
 
     <div class="navbar-default sidebar" role="navigation">
         <div class="sidebar-nav navbar-collapse">
+            <div class="sidebar-identity">
+                <span class="sidebar-identity-mark"><i class="fa <?php echo $isCashierNavigation ? 'fa-credit-card' : 'fa-cubes'; ?>" aria-hidden="true"></i></span>
+                <span><small><?php echo $isCashierNavigation ? 'SALES COUNTER' : 'MANAGEMENT'; ?></small><strong><?php echo $isCashierNavigation ? 'Cashier workspace' : 'Admin workspace'; ?></strong></span>
+            </div>
             <ul class="nav" id="side-menu">
                 <?php if ($isCashierNavigation) { ?>
                     <li>
@@ -59,7 +70,6 @@ if ($isCashierNavigation) {
                     <li><a href="purchaseslist.php"><i class="fa fa-list-alt fa-fw"></i> Purchase Order List</a></li>
                     <li><a href="orderpo.php"><i class="fa fa-list-alt fa-fw"></i> Purchase Order Form</a></li>
                     <li><a href="supplier.php"><i class="fa fa-truck fa-fw"></i> Supplier</a></li>
-                    <li><a rel="facebox" href="select_customer.php"><i class="fa fa-book fa-fw"></i> Customer Ledger</a></li>
                     <li>
                         <button type="button" class="nav-menu-toggle" aria-expanded="false"><i class="fa fa-files-o fa-fw"></i> REPORTS<span class="fa arrow"></span></button>
                         <ul class="nav nav-second-level" style="display: none;">
@@ -69,7 +79,6 @@ if ($isCashierNavigation) {
                             <li><a href="inventory.php">Inventory Report</a></li>
                             <li><a href="product_lose.php">List of Product Expired</a></li>
                             <li><a href="returned.php">Report of Returned Products</a></li>
-                            <li><a href="search_customer.php">Customer Transaction Record</a></li>
                         </ul>
                     </li>
                     <li>
@@ -133,6 +142,22 @@ if ($isCashierNavigation) {
             if (isCurrentSection) {
                 toggle.setAttribute('aria-expanded', 'true');
                 submenu.classList.add('nav-open');
+                toggle.classList.add('active');
+                toggle.parentElement.classList.add('active');
+            }
+        });
+
+        var pageLinks = document.querySelectorAll('.sidebar .nav a');
+        Array.prototype.forEach.call(pageLinks, function (link) {
+            if (link.pathname.replace(/\/$/, '') === currentPath) {
+                link.classList.add('active');
+                var parent = link.parentElement;
+                while (parent && !parent.classList.contains('sidebar')) {
+                    if (parent.tagName && parent.tagName.toLowerCase() === 'li') {
+                        parent.classList.add('active');
+                    }
+                    parent = parent.parentElement;
+                }
             }
         });
 
@@ -150,8 +175,12 @@ if ($isCashierNavigation) {
             toggle.setAttribute('aria-expanded', isOpen ? 'false' : 'true');
             if (isOpen) {
                 submenu.classList.remove('nav-open');
+                toggle.classList.remove('active');
+                toggle.parentElement.classList.remove('active');
             } else {
                 submenu.classList.add('nav-open');
+                toggle.classList.add('active');
+                toggle.parentElement.classList.add('active');
             }
         });
     })();

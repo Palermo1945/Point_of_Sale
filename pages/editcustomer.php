@@ -27,9 +27,7 @@ for($i=0; $row = $result->fetch(); $i++){
 	<form action="saveeditcustomer.php" method="post" class = "form-group">
 		<div id="ac">
 			<input type="hidden" name="memi" value="<?php echo $id; ?>" />
-			<span>First Name : </span><input type="text" name="name" class = "form-control" value="<?php echo $row['first_name']; ?>" />
-			<span>Middle Name : </span><input type="text" name="name" class = "form-control" value="<?php echo $row['middle_name']; ?>" />
-			<span>Last Name : </span><input type="text" name="name" class = "form-control" value="<?php echo $row['last_name']; ?>" />
+			<span>Customer Name : </span><input type="text" name="name" class = "form-control" value="<?php echo htmlspecialchars($row['customer_name'], ENT_QUOTES, 'UTF-8'); ?>" required />
 			<span>Address : </span><input type="text" name="address" class = "form-control" value="<?php echo $row['address']; ?>" />
 			<span>Contact : </span><input type="text" name="contact" class = "form-control" value="<?php echo $row['contact']; ?>" />
 			<span>Membership No. : </span><input type="text" name="memno" class = "form-control" value="<?php echo $row['membership_number']; ?>" />

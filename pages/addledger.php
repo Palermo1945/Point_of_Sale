@@ -1,3 +1,9 @@
+<?php
+require_once('auth.php');
+header('Location: home.php');
+exit();
+?>
+
  <link href="../vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
  <!-- MetisMenu CSS -->
