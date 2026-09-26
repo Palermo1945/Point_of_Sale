@@ -432,3 +432,147 @@ table.dataTable thead .sorting:after {
     border-left-width: 0;
   }
 }
+
+.form-control {
+  border: 1px solid #c8d2d8;
+  border-radius: 6px;
+  color: #303d45;
+  background: linear-gradient(145deg, #ffffff, #f0f4f6);
+  box-shadow: inset 0 1px 2px rgba(45, 58, 66, 0.05);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.form-control:focus {
+  border-color: #708893;
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(112, 136, 147, 0.16);
+}
+
+.modal-content {
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(235, 241, 244, 0.97));
+  box-shadow: 0 22px 60px rgba(37, 50, 58, 0.22), inset 0 1px rgba(255, 255, 255, 0.95);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+}
+
+.modal-header {
+  border-bottom: 1px solid rgba(114, 130, 139, 0.2);
+  background: linear-gradient(120deg, #f4f7f8, #e4eaed);
+}
+
+.modal-title {
+  color: #35434b;
+  font-weight: 600;
+}
+
+.modal-body {
+  max-height: calc(100vh - 210px);
+  overflow-y: auto;
+  padding: 22px;
+}
+
+.modal-body #ac {
+  display: grid;
+  grid-template-columns: minmax(100px, 0.45fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 12px 16px;
+}
+
+.modal-body #ac span {
+  width: auto !important;
+  margin: 0;
+  color: #53626a;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: right;
+}
+
+.modal-body #ac .form-control {
+  min-width: 0;
+  margin: 0;
+}
+
+.modal-body #ac .btn-block {
+  grid-column: 2;
+  border-radius: 6px;
+}
+
+form[action="savecustomer.php"] #ac,
+form[action="savesupplier.php"] #ac,
+form[action="saveledger.php"] #ac {
+  display: grid;
+  grid-template-columns: minmax(100px, 0.45fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 12px 16px;
+}
+
+form[action="savecustomer.php"] #ac span,
+form[action="savesupplier.php"] #ac span,
+form[action="saveledger.php"] #ac span {
+  margin: 0;
+  color: #53626a;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: right;
+}
+
+form[action="savecustomer.php"] #ac .btn-block,
+form[action="savesupplier.php"] #ac .btn-block,
+form[action="saveledger.php"] #ac .btn-block {
+  grid-column: 2;
+  border-radius: 6px;
+}
+
+.modal .btn-primary,
+#page-wrapper form .btn-primary {
+  border-color: #465963;
+  border-radius: 6px;
+  color: #fff;
+  background: linear-gradient(135deg, #667983, #465963);
+  box-shadow: 0 5px 12px rgba(48, 64, 72, 0.16);
+}
+
+.modal .btn-primary:hover,
+#page-wrapper form .btn-primary:hover {
+  border-color: #35464e;
+  background: linear-gradient(135deg, #566a74, #35464e);
+}
+
+@media (max-width: 600px) {
+  .modal-body #ac {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  .modal-body #ac span {
+    padding-top: 5px;
+    text-align: left;
+  }
+
+  .modal-body #ac .btn-block {
+    grid-column: 1;
+  }
+
+  form[action="savecustomer.php"] #ac,
+  form[action="savesupplier.php"] #ac,
+  form[action="saveledger.php"] #ac {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 8px;
+  }
+
+  form[action="savecustomer.php"] #ac span,
+  form[action="savesupplier.php"] #ac span,
+  form[action="saveledger.php"] #ac span {
+    padding-top: 5px;
+    text-align: left;
+  }
+
+  form[action="savecustomer.php"] #ac .btn-block,
+  form[action="savesupplier.php"] #ac .btn-block,
+  form[action="saveledger.php"] #ac .btn-block {
+    grid-column: 1;
+  }
+}

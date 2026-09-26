@@ -10,32 +10,31 @@
                     <form action="saveproduct.php" method="post" class = "form-group" >
                         <div id="ac">
                             <span>Category: </span>
-                            <select name="categ" class = "form-control" >
-                            <option>Select Category</option>
+                            <select name="categ" class = "form-control" required>
+                            <option value="" selected disabled>Select Category</option>
                             <option>Laptops</option>
                             <option>Computers</option>
                             <option>Second Hand Computers </option>
                             <option>Second Hand laptops </option>
                             <option>Peripherals</option>
                             </select>
-                            <span>Product Code : </span><input type="text" name="code" value = "<?php echo $pcode ?>" class = "form-control" />
-                            <span>Brand Name : </span><input type="text" name="bname" class = "form-control" />
-                            <span>Description Name : </span><input type="text" name="dname" class = "form-control" />
+                            <span>Product Code : </span><input type="text" name="code" value = "<?php echo $pcode ?>" class = "form-control" required />
+                            <span>Brand Name : </span><input type="text" name="bname" class = "form-control" required />
+                            <span>Description Name : </span><input type="text" name="dname" class = "form-control" required />
                             <span>Product Unit : </span>
-                            <select name="unit" class = "form-control" >
-                            <option>Select Product Unit</option>
+                            <select name="unit" class = "form-control" required>
+                            <option value="" selected disabled>Select Product Unit</option>
                             <option>Per Pieces</option>
                             <option>Per Box</option>
                             <option>Per Pack</option>
                             </select>
-                            <span>Cost : </span><input type="text" name="cost" class = "form-control" />
-                            <span>SRP : </span><input type="text" name="price"  class = "form-control" />
+                            <span>Cost : </span><input type="number" name="cost" min="0" step="0.01" class = "form-control" required />
+                            <span>SRP : </span><input type="number" name="price" min="0" step="0.01" class = "form-control" required />
                             <span>Supplier : </span>
-                            <select name="supplier" class = "form-control">
+                            <select name="supplier" class = "form-control" required>
                                 <?php
                                 include('connect.php');
                                 $result = $db->prepare("SELECT * FROM supliers");
-                                $result->bindParam(':userid', $res);
                                 $result->execute();
                                 for($i=0; $row = $result->fetch(); $i++){
                                     ?>
@@ -44,11 +43,12 @@
                                 }
                                 ?>
                             </select>
-                            <span>Quantity : </span><input type="text" name="qty" class = "form-control" />
+                            <span>Quantity : </span><input type="number" name="qty" min="0" step="1" class = "form-control" required />
                             <span>Date Delivered: </span><input type="date" name="date_del" class = "form-control" />
                             <span>Considered old stock : </span><input type="date" name="ex_date" class = "form-control" />
                             <span>&nbsp;</span><input class="btn btn-primary btn-block" type="submit" class = "form-control" value="Save" />
                         </div>
+                    </form>
                     </div>
                     <div class="modal-footer">
                     </div>
@@ -58,3 +58,4 @@
             <!-- /.modal-dialog -->
         </div>
                         <!-- /.modal -->
+     </div>

@@ -18,7 +18,9 @@
 
 <form action="savecustomer.php" method="post" class = "form-group">
 	<div id="ac">
-		<span>Name : </span><input type="text" name="name" class = "form-control" />
+		<span>First Name : </span><input type="text" name="fname" class = "form-control" required />
+		<span>Middle Name : </span><input type="text" name="mname" class = "form-control" />
+		<span>Last Name : </span><input type="text" name="lname" class = "form-control" required />
 		<span>Address : </span><input type="text" name="address" class = "form-control" />
 		<span>Contact : </span><input type="text" name="contact" class = "form-control" />
 		<span>Membership No. : </span><input type="text" name="memno" class = "form-control" />

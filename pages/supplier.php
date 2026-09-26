@@ -78,7 +78,7 @@
                             <div class="modal-dialog">
                                 <div class="modal-content">
                                     <div class="modal-header">
-                                        <h4 class="modal-title" id="myModalLabel">Add Customer</h4>
+                                        <h4 class="modal-title" id="myModalLabel">Add Supplier</h4>
                                     </div>
                                     <div class="modal-body">
 
